@@ -8,6 +8,65 @@
 		<script src="./qunit/qunit/qunit.js"></script>
 		<script src="https://raw.github.com/scottrabin/is-js/master/is.js"></script>
 
+		<script>
+			// various types to test
+			var TEST_OBJECTS = {
+				STRING_EMPTY    : "",
+				STRING_NONEMPTY : "a string",
+				STRING_NUMBER   : "123",
+				STRING_FLOAT    : "5.8e6",
+
+				NUMBER_ZERO     : 0,
+				NUMBER_POSITIVE : 1000,
+				NUMBER_NEGATIVE : -1000,
+				NUMBER_FLOAT    : 1.5,
+				NUMBER_INFINITE : Infinity,
+
+				BOOLEAN_TRUE  : true,
+				BOOLEAN_FALSE : false,
+
+				NULL : null,
+
+				UNDEFINED : undefined,
+
+				ARRAY_LITERAL_EMPTY    : [],
+				ARRAY_LITERAL_NONEMPTY : [1, 2, 3],
+				ARRAY_NEW_EMPTY        : new Array(),
+				ARRAY_NEW_NONEMPTY     : new Array(3),
+
+				OBJECT_LITERAL_EMPTY    : {},
+				OBJECT_LITERAL_NONEMPTY : {a: 1, b: 2}
+			};
+
+			function testObjects(type) {
+				// determine which object types are positive matches
+				var correct_type_re = new RegExp('^' + type, 'i'),
+					correct_type,
+					testValue;
+
+				for(testValue in TEST_OBJECTS) {
+					correct_type = correct_type_re.test(testValue);
+					equal(
+						is[type](TEST_OBJECTS[testValue]),
+						correct_type,
+						testValue + (correct_type ? ' is a ' : ' is not a ') + type
+					);
+				}
+			}
+
+			test("is.string", function() {
+				testObjects('string');
+			});
+
+			test("is.number", function() {
+				testObjects('number');
+			});
+
+			test("is.bool", function() {
+				testObjects('bool');
+			});
+		</script>
+
 	</head>
 	<body>
 		<div id="qunit"></div>
