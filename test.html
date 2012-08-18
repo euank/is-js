@@ -188,6 +188,17 @@
 					'OBJECT_LITERAL_NONEMPTY'
 				]);
 			});
+
+			test("is.in", function() {
+				ok( is['in'](TEST_OBJECTS.ARRAY_LITERAL_NONEMPTY, 1), "Elements of an array are in the array" );
+				ok( ! is['in'](TEST_OBJECTS.ARRAY_LITERAL_NONEMPTY, 0), "Elements not in an array are not in the array");
+				ok( is['in'](TEST_OBJECTS.OBJECT_USER_DEFINED, 'prop'), "Object properties are in the object" );
+				ok( ! is['in'](TEST_OBJECTS.OBJECT_USER_DEFINED, 'fn'), "Object prototype properties are not in the object" );
+				ok( is['in'](TEST_OBJECTS.OBJECT_LITERAL_NONEMPTY, 'a'), "Object literal properties are in the object" );
+				ok( ! is['in'](TEST_OBJECTS.OBJECT_LITERAL_NONEMPTY, 'not_in'), "Undefined properties are not in an object literal");
+				ok( ! is['in'](null, 'not_in'), "Invalid container objects (non-array/non-object) do not contain properties");
+			});
+
 		</script>
 
 	</head>
