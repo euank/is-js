@@ -29,6 +29,8 @@
 
 				UNDEFINED : undefined,
 
+				FUNCTION : function(){},
+
 				ARRAY_LITERAL_EMPTY    : [],
 				ARRAY_LITERAL_NONEMPTY : [1, 2, 3],
 				ARRAY_NEW_EMPTY        : new Array(),
@@ -38,32 +40,68 @@
 				OBJECT_LITERAL_NONEMPTY : {a: 1, b: 2}
 			};
 
-			function testObjects(type) {
-				// determine which object types are positive matches
-				var correct_type_re = new RegExp('^' + type, 'i'),
-					correct_type,
-					testValue;
+			/**
+			 * Test all items in TEST_OBJECTS, using the given function.
+			 * Correctness is determined by `pass`; either it's a function that
+			 * takes the current test object name, or an array of valid TEST_OBJECTS
+			 * property names.
+			 *
+			 * @param {function(*): boolean} func The `is.` function to test
+			 * @param {(function(string, *): boolean|Array.<string>)} pass A function to test
+			 *        for whether or not a given test case should be `true` or `false`, or
+			 *        a list of test cases that should pass.
+			 */
+			function testObjects(type, func, pass) {
+				var isCorrectType, testValue;
+				for (testValue in TEST_OBJECTS) {
+					isCorrectType = (is.fn(pass) ? pass(testValue, TEST_OBJECTS[testValue]) : pass.indexOf(testValue) > -1);
 
-				for(testValue in TEST_OBJECTS) {
-					correct_type = correct_type_re.test(testValue);
 					equal(
-						is[type](TEST_OBJECTS[testValue]),
-						correct_type,
-						testValue + (correct_type ? ' is a ' : ' is not a ') + type
+						func(TEST_OBJECTS[testValue]),
+						isCorrectType,
+						testValue + (isCorrectType ? ' is a ' : ' is not a ') + type
 					);
 				}
 			}
 
 			test("is.string", function() {
-				testObjects('string');
+				testObjects('string', is.string, function(name, val) {
+					return /^string/i.test(name);
+				});
 			});
 
 			test("is.number", function() {
-				testObjects('number');
+				testObjects('number', is.number, function(name, val) {
+					return /^number/i.test(name);
+				});
 			});
 
 			test("is.bool", function() {
-				testObjects('bool');
+				testObjects('boolean', is.bool, function(name, val) {
+					return /^boolean/i.test(name);
+				});
+			});
+
+			test("is.fn", function() {
+				testObjects('function', is.fn, ['FUNCTION']);
+			});
+
+			test("is.array", function() {
+				testObjects('array', is.array, function(name, val) {
+					return /^array/i.test(name);
+				});
+			});
+
+			test("is.object", function() {
+				testObjects('object', is.object, [
+					'FUNCTION',
+					'ARRAY_LITERAL_EMPTY',
+					'ARRAY_LITERAL_NONEMPTY',
+					'ARRAY_NEW_EMPTY',
+					'ARRAY_NEW_NONEMPTY',
+					'OBJECT_LITERAL_EMPTY',
+					'OBJECT_LITERAL_NONEMPTY'
+				]);
 			});
 		</script>
 
