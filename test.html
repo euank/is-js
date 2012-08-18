@@ -93,7 +93,7 @@
 					equal(
 						func(TEST_OBJECTS[testValue]),
 						isCorrectType,
-						testValue + (isCorrectType ? ' is a ' : ' is not a ') + type
+						testValue + (isCorrectType ? ' is ' : ' is not ') + type
 					);
 				}
 			}
@@ -197,6 +197,21 @@
 				ok( is['in'](TEST_OBJECTS.OBJECT_LITERAL_NONEMPTY, 'a'), "Object literal properties are in the object" );
 				ok( ! is['in'](TEST_OBJECTS.OBJECT_LITERAL_NONEMPTY, 'not_in'), "Undefined properties are not in an object literal");
 				ok( ! is['in'](null, 'not_in'), "Invalid container objects (non-array/non-object) do not contain properties");
+			});
+
+			test("is.empty", function() {
+				testObjects('empty', is.empty, [
+					'STRING_EMPTY',
+					'NUMBER_ZERO',
+					'BOOLEAN_FALSE',
+					'NULL',
+					'UNDEFINED',
+					'FUNCTION', // has no properties, therefore is empty
+					'FUNCTION_CONSTRUCTOR', // also has no properties, therefore is empty
+					'ARRAY_LITERAL_EMPTY',
+					'ARRAY_NEW_EMPTY',
+					'OBJECT_LITERAL_EMPTY'
+				]);
 			});
 
 		</script>
