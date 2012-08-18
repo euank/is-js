@@ -61,6 +61,11 @@
 				ELEMENT_DETACHED_DIV : document.createElement('div')
 			};
 
+			var FN_CONSTRUCTOR = function(p) { this.prop = p; };
+			FN_CONSTRUCTOR.prototype.fn = function(){};
+			TEST_OBJECTS.FUNCTION_CONSTRUCTOR = FN_CONSTRUCTOR;
+			TEST_OBJECTS.OBJECT_USER_DEFINED = new FN_CONSTRUCTOR('property');
+
 			// onload, add more objects that need the DOM to be ready
 			window.onload = function() {
 				TEST_OBJECTS.ELEMENT_BODY = document.body;
@@ -112,7 +117,10 @@
 			});
 
 			test("is.fn", function() {
-				testObjects('function', is.fn, ['FUNCTION']);
+				testObjects('function', is.fn, [
+					'FUNCTION',
+					'FUNCTION_CONSTRUCTOR'
+				]);
 			});
 
 			test("is.array", function() {
@@ -124,12 +132,16 @@
 			test("is.object", function() {
 				testObjects('object', is.object, [
 					'FUNCTION',
+					'FUNCTION_CONSTRUCTOR',
+
 					'ARRAY_LITERAL_EMPTY',
 					'ARRAY_LITERAL_NONEMPTY',
 					'ARRAY_NEW_EMPTY',
 					'ARRAY_NEW_NONEMPTY',
+
 					'OBJECT_LITERAL_EMPTY',
 					'OBJECT_LITERAL_NONEMPTY',
+					'OBJECT_USER_DEFINED',
 
 					'ELEMENT_DOCUMENT',
 					'ELEMENT_BODY',
@@ -167,6 +179,13 @@
 					'NUMBER_OCTAL_NEGATIVE',
 					'NUMBER_HEX_POSITIVE',
 					'NUMBER_HEX_NEGATIVE'
+				]);
+			});
+
+			test("is.hash", function() {
+				testObjects('hash', is.hash, [
+					'OBJECT_LITERAL_EMPTY',
+					'OBJECT_LITERAL_NONEMPTY'
 				]);
 			});
 		</script>
