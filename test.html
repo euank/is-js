@@ -11,16 +11,34 @@
 		<script>
 			// various types to test
 			var TEST_OBJECTS = {
+				// Strings
 				STRING_EMPTY    : "",
 				STRING_NONEMPTY : "a string",
-				STRING_NUMBER   : "123",
-				STRING_FLOAT    : "5.8e6",
 
+				// Numeric strings
+				STRING_NEGATIVE_INTEGER : "-10",
+				STRING_POSITIVE_INTEGER : "5",
+				STRING_OCTAL_LITERAL    : "040",
+				STRING_HEX_LITERAL      : "0xFF",
+				STRING_POSITIVE_FLOAT   : "4.5385",
+				STRING_NEGATIVE_FLOAT   : "-5.592",
+				STRING_EXPONENTIAL      : "123e4",
+				STRING_NEGATIVE_EXPONENTIAL : "-83e-6",
+
+				// Numbers
 				NUMBER_ZERO     : 0,
 				NUMBER_POSITIVE : 1000,
 				NUMBER_NEGATIVE : -1000,
-				NUMBER_FLOAT    : 1.5,
-				NUMBER_INFINITE : Infinity,
+				NUMBER_FLOAT_POSITIVE : 1.5,
+				NUMBER_FLOAT_NEGATIVE : -3.6,
+				NUMBER_EXPONENTIAL_POSITIVE : 1.2e3,
+				NUMBER_EXPONENTIAL_NEGATIVE : -3.2e-5,
+				NUMBER_OCTAL_POSITIVE : 070,
+				NUMBER_OCTAL_NEGATIVE : -010,
+				NUMBER_HEX_POSITIVE   : 0xAB,
+				NUMBER_HEX_NEGATIVE   : -0xCC,
+				NUMBER_INFINITY : Infinity,
+				NUMBER_NEGATIVE_INFINITY : -Infinity,
 
 				BOOLEAN_TRUE  : true,
 				BOOLEAN_FALSE : false,
@@ -125,6 +143,30 @@
 					'ELEMENT_BODY',
 					'ELEMENT_DETACHED_DIV',
 					'ELEMENT_DIV'
+				]);
+			});
+
+			test("is.numeric", function() {
+				testObjects('numeric', is.numeric, [
+					'STRING_NEGATIVE_INTEGER',
+					'STRING_POSITIVE_INTEGER',
+					'STRING_OCTAL_LITERAL',
+					'STRING_HEX_LITERAL',
+					'STRING_POSITIVE_FLOAT',
+					'STRING_NEGATIVE_FLOAT',
+					'STRING_EXPONENTIAL',
+					'STRING_NEGATIVE_EXPONENTIAL',
+					'NUMBER_ZERO',
+					'NUMBER_POSITIVE',
+					'NUMBER_NEGATIVE',
+					'NUMBER_FLOAT_POSITIVE',
+					'NUMBER_FLOAT_NEGATIVE',
+					'NUMBER_EXPONENTIAL_POSITIVE',
+					'NUMBER_EXPONENTIAL_NEGATIVE',
+					'NUMBER_OCTAL_POSITIVE',
+					'NUMBER_OCTAL_NEGATIVE',
+					'NUMBER_HEX_POSITIVE',
+					'NUMBER_HEX_NEGATIVE'
 				]);
 			});
 		</script>
