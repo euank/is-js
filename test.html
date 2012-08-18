@@ -37,7 +37,18 @@
 				ARRAY_NEW_NONEMPTY     : new Array(3),
 
 				OBJECT_LITERAL_EMPTY    : {},
-				OBJECT_LITERAL_NONEMPTY : {a: 1, b: 2}
+				OBJECT_LITERAL_NONEMPTY : {a: 1, b: 2},
+
+				ELEMENT_DOCUMENT : document,
+				ELEMENT_DETACHED_DIV : document.createElement('div')
+			};
+
+			// onload, add more objects that need the DOM to be ready
+			window.onload = function() {
+				TEST_OBJECTS.ELEMENT_BODY = document.body;
+				TEST_OBJECTS.ELEMENT_DIV = document.createElement('div');
+
+				document.body.appendChild(TEST_OBJECTS.ELEMENT_DIV);
 			};
 
 			/**
@@ -100,7 +111,20 @@
 					'ARRAY_NEW_EMPTY',
 					'ARRAY_NEW_NONEMPTY',
 					'OBJECT_LITERAL_EMPTY',
-					'OBJECT_LITERAL_NONEMPTY'
+					'OBJECT_LITERAL_NONEMPTY',
+
+					'ELEMENT_DOCUMENT',
+					'ELEMENT_BODY',
+					'ELEMENT_DETACHED_DIV',
+					'ELEMENT_DIV'
+				]);
+			});
+
+			test("is.element", function() {
+				testObjects('element', is.element, [
+					'ELEMENT_BODY',
+					'ELEMENT_DETACHED_DIV',
+					'ELEMENT_DIV'
 				]);
 			});
 		</script>
