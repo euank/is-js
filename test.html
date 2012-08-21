@@ -54,6 +54,9 @@
 				UNDEFINED : undefined,
 
 				FUNCTION : function(){},
+				FUNCTION_CONSTRUCTOR : function(){},
+				FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY : function(p) { this.prop = p; },
+				FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY : function(){},
 
 				ARRAY_LITERAL_EMPTY    : [],
 				ARRAY_LITERAL_NONEMPTY : [1, 2, 3],
@@ -66,12 +69,15 @@
 				ELEMENT_DOCUMENT : document,
 				ELEMENT_DETACHED_DIV : document.createElement('div')
 			};
+			TEST_OBJECTS.FUNCTION_CONSTRUCTOR.prototype.aMethod = function(){};
+			TEST_OBJECTS.FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY.prototype.aMethod = function(){};
+			TEST_OBJECTS.FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY.prototype.aProp = 'protoPropValue';
 
-			var FN_CONSTRUCTOR = function(p) { this.prop = p; };
-			FN_CONSTRUCTOR.prototype.fn = function(){};
-			FN_CONSTRUCTOR.prototype.protoProp = true;
-			TEST_OBJECTS.FUNCTION_CONSTRUCTOR = FN_CONSTRUCTOR;
-			TEST_OBJECTS.OBJECT_USER_DEFINED = new FN_CONSTRUCTOR('property');
+			TEST_OBJECTS.OBJECT_USER_DEFINED_WITH_PROPERTIES = new TEST_OBJECTS.FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY('propertyValue');
+			TEST_OBJECTS.OBJECT_USER_DEFINED_EMPTY = new TEST_OBJECTS.FUNCTION();
+			TEST_OBJECTS.OBJECT_USER_DEFINED_PROTOTYPE_ONLY  = new TEST_OBJECTS.FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY();
+			TEST_OBJECTS.OBJECT_USER_DEFINED = new TEST_OBJECTS.FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY();
+			TEST_OBJECTS.OBJECT_USER_DEFINED.aProperty = 'propValue';
 
 			// onload, add more objects that need the DOM to be ready
 			window.onload = function() {
@@ -126,7 +132,9 @@
 			test("is.fn", function() {
 				testObjects('function', is.fn, [
 					'FUNCTION',
-					'FUNCTION_CONSTRUCTOR'
+					'FUNCTION_CONSTRUCTOR',
+					'FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY',
+					'FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY'
 				]);
 			});
 
@@ -140,12 +148,17 @@
 				testObjects('object', is.object, [
 					'FUNCTION',
 					'FUNCTION_CONSTRUCTOR',
+					'FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY',
+					'FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY',
 
 					'ARRAY_LITERAL_EMPTY',
 					'ARRAY_LITERAL_NONEMPTY',
 					'ARRAY_NEW_EMPTY',
 					'ARRAY_NEW_NONEMPTY',
 
+					'OBJECT_USER_DEFINED_WITH_PROPERTIES',
+					'OBJECT_USER_DEFINED_EMPTY',
+					'OBJECT_USER_DEFINED_PROTOTYPE_ONLY',
 					'OBJECT_LITERAL_EMPTY',
 					'OBJECT_LITERAL_NONEMPTY',
 					'OBJECT_USER_DEFINED',
@@ -199,10 +212,10 @@
 			test("is.inside", function() {
 				ok( is.inside(TEST_OBJECTS.ARRAY_LITERAL_NONEMPTY, 1), "Elements of an array are in the array" );
 				ok( ! is.inside(TEST_OBJECTS.ARRAY_LITERAL_NONEMPTY, 0), "Elements not in an array are not in the array");
-				ok( is.inside(TEST_OBJECTS.OBJECT_USER_DEFINED, 'property'), "The value of object properties are in the object");
-				ok( ! is.inside(TEST_OBJECTS.OBJECT_USER_DEFINED, 'prop'), "Object property names are not in the object");
-				ok( ! is.inside(TEST_OBJECTS.OBJECT_USER_DEFINED, 'fn'), "Object prototype properties are not in the object");
-				ok( ! is.inside(TEST_OBJECTS.OBJECT_USER_DEFINED, 'protoProp'), "Object prototype property values are not in the object");
+				ok( is.inside(TEST_OBJECTS.OBJECT_USER_DEFINED, 'propValue'), "The value of object properties are in the object");
+				ok( ! is.inside(TEST_OBJECTS.OBJECT_USER_DEFINED, 'aProperty'), "Object property names are not in the object");
+				ok( ! is.inside(TEST_OBJECTS.OBJECT_USER_DEFINED, 'aMethod'), "Object prototype properties are not in the object");
+				ok( ! is.inside(TEST_OBJECTS.OBJECT_USER_DEFINED, 'protoPropValue'), "Object prototype property values are not in the object");
 				ok( is.inside(TEST_OBJECTS.OBJECT_LITERAL_NONEMPTY, 1), "Object literal property values are in the object");
 				ok( ! is.inside(TEST_OBJECTS.OBJECT_LITERAL_NONEMPTY, 'a'), "Object literal property names are not in the object");
 				ok( ! is.inside(TEST_OBJECTS.OBJECT_LITERAL_NONEMPTY, 'not_in'), "Undefined properties are not in an object literal");
@@ -218,6 +231,10 @@
 					'UNDEFINED',
 					'FUNCTION', // has no properties, therefore is empty
 					'FUNCTION_CONSTRUCTOR', // also has no properties, therefore is empty
+					'FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY', // see above
+					'FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY', // see above
+					'OBJECT_USER_DEFINED_EMPTY', // no properties defined on object = empty
+					'OBJECT_USER_DEFINED_PROTOTYPE_ONLY', // prototype properties are not on the object
 					'ARRAY_LITERAL_EMPTY',
 					'ARRAY_NEW_EMPTY',
 					'OBJECT_LITERAL_EMPTY'
