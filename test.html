@@ -53,6 +53,8 @@
 
 				UNDEFINED : undefined,
 
+				REGEX : /regex/,
+
 				FUNCTION : function(){},
 				FUNCTION_CONSTRUCTOR : function(){},
 				FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY : function(p) { this.prop = p; },
@@ -146,6 +148,8 @@
 
 			test("is.object", function() {
 				testObjects('object', is.object, [
+					'REGEX',
+
 					'FUNCTION',
 					'FUNCTION_CONSTRUCTOR',
 					'FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY',
@@ -167,6 +171,12 @@
 					'ELEMENT_BODY',
 					'ELEMENT_DETACHED_DIV',
 					'ELEMENT_DIV'
+				]);
+			});
+
+			test("is.regex", function() {
+				testObjects('RegExp', is.regex, [
+					'REGEX'
 				]);
 			});
 
@@ -229,6 +239,7 @@
 					'BOOLEAN_FALSE',
 					'NULL',
 					'UNDEFINED',
+					'REGEX',
 					'FUNCTION', // has no properties, therefore is empty
 					'FUNCTION_CONSTRUCTOR', // also has no properties, therefore is empty
 					'FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY', // see above
