@@ -14,6 +14,7 @@
 				// Strings
 				STRING_EMPTY    : "",
 				STRING_NONEMPTY : "a string",
+				STRING_VIA_CONSTRUCTOR : new String('constructed'),
 
 				// Numeric strings
 				STRING_NEGATIVE_INTEGER : "-10",
@@ -45,9 +46,11 @@
 				NUMBER_HEX_NEGATIVE   : -0xCC,
 				NUMBER_INFINITY : Infinity,
 				NUMBER_NEGATIVE_INFINITY : -Infinity,
+				NUMBER_VIA_CONSTRUCTOR : new Number(5),
 
 				BOOLEAN_TRUE  : true,
 				BOOLEAN_FALSE : false,
+				BOOLEAN_VIA_CONSTRUCTOR : new Boolean(true),
 
 				NULL : null,
 
@@ -57,6 +60,7 @@
 
 				FUNCTION : function(){},
 				FUNCTION_CONSTRUCTOR : function(){},
+				FUNCTION_VIA_CONSTRUCTOR : new Function('return true'),
 				FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY : function(p) { this.prop = p; },
 				FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY : function(){},
 
@@ -135,6 +139,7 @@
 				testObjects('function', is.fn, [
 					'FUNCTION',
 					'FUNCTION_CONSTRUCTOR',
+					'FUNCTION_VIA_CONSTRUCTOR',
 					'FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY',
 					'FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY'
 				]);
@@ -148,10 +153,14 @@
 
 			test("is.object", function() {
 				testObjects('object', is.object, [
+					'STRING_VIA_CONSTRUCTOR',
+					'NUMBER_VIA_CONSTRUCTOR',
+					'BOOLEAN_VIA_CONSTRUCTOR',
 					'REGEX',
 
 					'FUNCTION',
 					'FUNCTION_CONSTRUCTOR',
+					'FUNCTION_VIA_CONSTRUCTOR',
 					'FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY',
 					'FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY',
 
@@ -208,7 +217,8 @@
 					'NUMBER_OCTAL_POSITIVE',
 					'NUMBER_OCTAL_NEGATIVE',
 					'NUMBER_HEX_POSITIVE',
-					'NUMBER_HEX_NEGATIVE'
+					'NUMBER_HEX_NEGATIVE',
+					'NUMBER_VIA_CONSTRUCTOR'
 				]);
 			});
 
@@ -248,6 +258,7 @@
 					'REGEX',
 					'FUNCTION', // has no properties, therefore is empty
 					'FUNCTION_CONSTRUCTOR', // also has no properties, therefore is empty
+					'FUNCTION_VIA_CONSTRUCTOR', // no properties, therefore empty
 					'FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY', // see above
 					'FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY', // see above
 					'OBJECT_USER_DEFINED_EMPTY', // no properties defined on object = empty
