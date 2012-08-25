@@ -232,6 +232,12 @@
 				ok( ! is.inside(null, 'not_in'), "Invalid container objects (non-array/non-object) do not contain properties");
 			});
 
+			test("is.set", function() {
+				testObjects('set', is.set, function(name, val) {
+					return (name !== 'NULL' && name !== 'UNDEFINED');
+				});
+			});
+
 			test("is.empty", function() {
 				testObjects('empty', is.empty, [
 					'STRING_EMPTY',
