@@ -8,83 +8,11 @@
 		<script src="./qunit/qunit/qunit.js"></script>
 		<script src="https://raw.github.com/scottrabin/is-js/master/is.js"></script>
 
+		<script src="https://raw.github.com/scottrabin/is-js/master/test/objects.js"></script>
+		<script src="https://raw.github.com/scottrabin/is-js/master/test/map.js"></script>
+		<script src="https://raw.github.com/scottrabin/is-js/master/test/inside.js"></script>
+
 		<script>
-			// various types to test
-			var TEST_OBJECTS = {
-				// Strings
-				STRING_EMPTY    : "",
-				STRING_NONEMPTY : "a string",
-				STRING_VIA_CONSTRUCTOR : new String('constructed'),
-
-				// Numeric strings
-				STRING_NEGATIVE_INTEGER : "-10",
-				STRING_POSITIVE_INTEGER : "5",
-				STRING_OCTAL_LITERAL    : "040",
-				STRING_HEX_LITERAL      : "0xFF",
-				STRING_POSITIVE_FLOAT   : "4.5385",
-				STRING_NEGATIVE_FLOAT   : "-5.592",
-				STRING_EXPONENTIAL      : "123e4",
-				STRING_NEGATIVE_EXPONENTIAL : "-83e-6",
-
-				// Seminumeric strings (edge cases)
-				STRING_BEGIN_NUMBER   : "10abcdef",
-				STRING_END_NUMBER     : "abcdef10",
-				STRING_WRAP_NUMBER    : "10abcd10",
-				STRING_WRAPPED_NUMBER : "abc10def",
-
-				// Numbers
-				NUMBER_ZERO     : 0,
-				NUMBER_POSITIVE : 1000,
-				NUMBER_NEGATIVE : -1000,
-				NUMBER_FLOAT_POSITIVE : 1.5,
-				NUMBER_FLOAT_NEGATIVE : -3.6,
-				NUMBER_EXPONENTIAL_POSITIVE : 1.2e3,
-				NUMBER_EXPONENTIAL_NEGATIVE : -3.2e-5,
-				NUMBER_OCTAL_POSITIVE : 070,
-				NUMBER_OCTAL_NEGATIVE : -010,
-				NUMBER_HEX_POSITIVE   : 0xAB,
-				NUMBER_HEX_NEGATIVE   : -0xCC,
-				NUMBER_INFINITY : Infinity,
-				NUMBER_NEGATIVE_INFINITY : -Infinity,
-				NUMBER_VIA_CONSTRUCTOR : new Number(5),
-
-				BOOLEAN_TRUE  : true,
-				BOOLEAN_FALSE : false,
-				BOOLEAN_VIA_CONSTRUCTOR : new Boolean(true),
-
-				NULL : null,
-
-				UNDEFINED : undefined,
-
-				REGEX : /regex/,
-
-				FUNCTION : function(){},
-				FUNCTION_CONSTRUCTOR : function(){},
-				FUNCTION_VIA_CONSTRUCTOR : new Function('return true'),
-				FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY : function(p) { this.prop = p; },
-				FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY : function(){},
-
-				ARRAY_LITERAL_EMPTY    : [],
-				ARRAY_LITERAL_NONEMPTY : [1, 2, 3],
-				ARRAY_NEW_EMPTY        : new Array(),
-				ARRAY_NEW_NONEMPTY     : new Array(3),
-
-				OBJECT_LITERAL_EMPTY    : {},
-				OBJECT_LITERAL_NONEMPTY : {a: 1, b: 2},
-
-				ELEMENT_DOCUMENT : document,
-				ELEMENT_DETACHED_DIV : document.createElement('div')
-			};
-			TEST_OBJECTS.FUNCTION_CONSTRUCTOR.prototype.aMethod = function(){};
-			TEST_OBJECTS.FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY.prototype.aMethod = function(){};
-			TEST_OBJECTS.FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY.prototype.aProp = 'protoPropValue';
-
-			TEST_OBJECTS.OBJECT_USER_DEFINED_WITH_PROPERTIES = new TEST_OBJECTS.FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY('propertyValue');
-			TEST_OBJECTS.OBJECT_USER_DEFINED_EMPTY = new TEST_OBJECTS.FUNCTION();
-			TEST_OBJECTS.OBJECT_USER_DEFINED_PROTOTYPE_ONLY  = new TEST_OBJECTS.FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY();
-			TEST_OBJECTS.OBJECT_USER_DEFINED = new TEST_OBJECTS.FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY();
-			TEST_OBJECTS.OBJECT_USER_DEFINED.aProperty = 'propValue';
-
 			// onload, add more objects that need the DOM to be ready
 			window.onload = function() {
 				TEST_OBJECTS.ELEMENT_BODY = document.body;
@@ -117,156 +45,20 @@
 				}
 			}
 
-			test("is.string", function() {
-				testObjects('string', is.string, function(name, val) {
-					return /^string/i.test(name);
-				});
-			});
+			// iterate over the map and test as appropriate
+			for (var func in TEST_MAP) {
+				(function(fn) {
+					test("is." + fn, function(){
+						testObjects(TEST_MAP[fn].name, is[fn], TEST_MAP[fn].pass);
+					});
+				})(func);
+			}
 
-			test("is.number", function() {
-				testObjects('number', is.number, function(name, val) {
-					return /^number/i.test(name);
-				});
-			});
-
-			test("is.bool", function() {
-				testObjects('boolean', is.bool, function(name, val) {
-					return /^boolean/i.test(name);
-				});
-			});
-
-			test("is.fn", function() {
-				testObjects('function', is.fn, [
-					'FUNCTION',
-					'FUNCTION_CONSTRUCTOR',
-					'FUNCTION_VIA_CONSTRUCTOR',
-					'FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY',
-					'FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY'
-				]);
-			});
-
-			test("is.array", function() {
-				testObjects('array', is.array, function(name, val) {
-					return /^array/i.test(name);
-				});
-			});
-
-			test("is.object", function() {
-				testObjects('object', is.object, [
-					'STRING_VIA_CONSTRUCTOR',
-					'NUMBER_VIA_CONSTRUCTOR',
-					'BOOLEAN_VIA_CONSTRUCTOR',
-					'REGEX',
-
-					'FUNCTION',
-					'FUNCTION_CONSTRUCTOR',
-					'FUNCTION_VIA_CONSTRUCTOR',
-					'FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY',
-					'FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY',
-
-					'ARRAY_LITERAL_EMPTY',
-					'ARRAY_LITERAL_NONEMPTY',
-					'ARRAY_NEW_EMPTY',
-					'ARRAY_NEW_NONEMPTY',
-
-					'OBJECT_USER_DEFINED_WITH_PROPERTIES',
-					'OBJECT_USER_DEFINED_EMPTY',
-					'OBJECT_USER_DEFINED_PROTOTYPE_ONLY',
-					'OBJECT_LITERAL_EMPTY',
-					'OBJECT_LITERAL_NONEMPTY',
-					'OBJECT_USER_DEFINED',
-
-					'ELEMENT_DOCUMENT',
-					'ELEMENT_BODY',
-					'ELEMENT_DETACHED_DIV',
-					'ELEMENT_DIV'
-				]);
-			});
-
-			test("is.regex", function() {
-				testObjects('RegExp', is.regex, [
-					'REGEX'
-				]);
-			});
-
-			test("is.element", function() {
-				testObjects('element', is.element, [
-					'ELEMENT_BODY',
-					'ELEMENT_DETACHED_DIV',
-					'ELEMENT_DIV'
-				]);
-			});
-
-			test("is.numeric", function() {
-				testObjects('numeric', is.numeric, [
-					'STRING_NEGATIVE_INTEGER',
-					'STRING_POSITIVE_INTEGER',
-					'STRING_OCTAL_LITERAL',
-					'STRING_HEX_LITERAL',
-					'STRING_POSITIVE_FLOAT',
-					'STRING_NEGATIVE_FLOAT',
-					'STRING_EXPONENTIAL',
-					'STRING_NEGATIVE_EXPONENTIAL',
-					'NUMBER_ZERO',
-					'NUMBER_POSITIVE',
-					'NUMBER_NEGATIVE',
-					'NUMBER_FLOAT_POSITIVE',
-					'NUMBER_FLOAT_NEGATIVE',
-					'NUMBER_EXPONENTIAL_POSITIVE',
-					'NUMBER_EXPONENTIAL_NEGATIVE',
-					'NUMBER_OCTAL_POSITIVE',
-					'NUMBER_OCTAL_NEGATIVE',
-					'NUMBER_HEX_POSITIVE',
-					'NUMBER_HEX_NEGATIVE',
-					'NUMBER_VIA_CONSTRUCTOR'
-				]);
-			});
-
-			test("is.hash", function() {
-				testObjects('hash', is.hash, [
-					'OBJECT_LITERAL_EMPTY',
-					'OBJECT_LITERAL_NONEMPTY'
-				]);
-			});
-
+			// test is.inside, which is not as easily tested as the other is.* functions
 			test("is.inside", function() {
-				ok( is.inside(TEST_OBJECTS.ARRAY_LITERAL_NONEMPTY, 1), "Elements of an array are in the array" );
-				ok( ! is.inside(TEST_OBJECTS.ARRAY_LITERAL_NONEMPTY, 0), "Elements not in an array are not in the array");
-				ok( is.inside(TEST_OBJECTS.OBJECT_USER_DEFINED, 'propValue'), "The value of object properties are in the object");
-				ok( ! is.inside(TEST_OBJECTS.OBJECT_USER_DEFINED, 'aProperty'), "Object property names are not in the object");
-				ok( ! is.inside(TEST_OBJECTS.OBJECT_USER_DEFINED, 'aMethod'), "Object prototype properties are not in the object");
-				ok( ! is.inside(TEST_OBJECTS.OBJECT_USER_DEFINED, 'protoPropValue'), "Object prototype property values are not in the object");
-				ok( is.inside(TEST_OBJECTS.OBJECT_LITERAL_NONEMPTY, 1), "Object literal property values are in the object");
-				ok( ! is.inside(TEST_OBJECTS.OBJECT_LITERAL_NONEMPTY, 'a'), "Object literal property names are not in the object");
-				ok( ! is.inside(TEST_OBJECTS.OBJECT_LITERAL_NONEMPTY, 'not_in'), "Undefined properties are not in an object literal");
-				ok( ! is.inside(null, 'not_in'), "Invalid container objects (non-array/non-object) do not contain properties");
-			});
-
-			test("is.set", function() {
-				testObjects('set', is.set, function(name, val) {
-					return (name !== 'NULL' && name !== 'UNDEFINED');
-				});
-			});
-
-			test("is.empty", function() {
-				testObjects('empty', is.empty, [
-					'STRING_EMPTY',
-					'NUMBER_ZERO',
-					'BOOLEAN_FALSE',
-					'NULL',
-					'UNDEFINED',
-					'REGEX',
-					'FUNCTION', // has no properties, therefore is empty
-					'FUNCTION_CONSTRUCTOR', // also has no properties, therefore is empty
-					'FUNCTION_VIA_CONSTRUCTOR', // no properties, therefore empty
-					'FUNCTION_CONSTRUCTOR_WITH_PROPERTY_ONLY', // see above
-					'FUNCTION_CONSTRUCTOR_WITH_PROTOTYPE_ONLY', // see above
-					'OBJECT_USER_DEFINED_EMPTY', // no properties defined on object = empty
-					'OBJECT_USER_DEFINED_PROTOTYPE_ONLY', // prototype properties are not on the object
-					'ARRAY_LITERAL_EMPTY',
-					'ARRAY_NEW_EMPTY',
-					'OBJECT_LITERAL_EMPTY'
-				]);
+				for (var testName in is_inside) {
+					equal(is_inside[testName].actual, is_inside[testName].expected, testName);
+				}
 			});
 
 		</script>
